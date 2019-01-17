@@ -33,9 +33,25 @@ for ip in re.findall(pattern, html):
     print("find potential proxy:", proxy)
     proxy_list.append(proxy)
 browser.quit()
+#
+# #now try to "shua" any url using above proxy
+# def shua_url(url, proxy):
+#     options = webdriver.ChromeOptions()
+#     options.add_argument('lang=zh_CN.UTF-8')
+#     options.add_argument("user-agent={ug}".format(ug=get_random_user_agent()))
+#     options.add_argument('--proxy-server={proxy}'.format(proxy=proxy))
+#     #options.add_argument('--proxy-server=https://{proxy}'.format(proxy=proxy))
+#     print("try shua {url} using proxy:{proxy}".format(url=url, proxy=proxy))
+#     bs = Browser('chrome', options=options)
+#     bs.visit(url)
+#     #browser.find_by_id('kw').click() #如果需要点击播放
+#     # bs.quit()
+#
+# for proxy in proxy_list:
+#     shua_url("https://m.weibo.cn/1797131247/4301198158585325", proxy)
 
 #now try to "shua" any url using above proxy
-def shua_url(url, proxy):
+def shua_url_chrome(url, proxy):
     options = webdriver.ChromeOptions()
     options.add_argument('lang=zh_CN.UTF-8')
     options.add_argument("user-agent={ug}".format(ug=get_random_user_agent()))
@@ -45,8 +61,22 @@ def shua_url(url, proxy):
     bs = Browser('chrome', options=options)
     bs.visit(url)
     #browser.find_by_id('kw').click() #如果需要点击播放
-    # bs.quit()
+    bs.quit()
+
+def shua_url_firefox(url, proxy):
+    (host, port) = proxy.split(sep=":")
+    profile = {
+        'network.proxy.http': host,
+        'network.proxy.http_port': port,
+        'network.proxy.ssl': host,
+        'network.proxy.ssl_port': port,
+        'network.proxy.type': 1
+    }
+    print("try shua {url} using profile:{profile}".format(url=url, profile=profile))
+    bs = Browser('firefox', profile_preferences=profile)
+    bs.visit(url)
+    browser.find_by_id('play-btn').click() #如果需要点击播放
+    bs.quit()
 
 for proxy in proxy_list:
-    shua_url("https://m.weibo.cn/1797131247/4301198158585325", proxy)
-
+    shua_url_firefox("https://www.iesdouyin.com/share/video/6643842692671343880/?region=NL&mid=6643842706210556675&u_code=16m0gmm2g&titleType=title&timestamp=1547668712&utm_campaign=client_share&app=aweme&utm_medium=ios&tt_from=copy&utm_source=copy&iid=57944604896", proxy)
